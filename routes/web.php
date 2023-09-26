@@ -35,4 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('/projects', [\App\Http\Controllers\ProjectController::class, 'index'])->name('project.index');
+Route::get('/projects/import', [\App\Http\Controllers\ProjectController::class, 'import'])->name('project.import');
+Route::get('/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('task.index');
+
 require __DIR__.'/auth.php';
