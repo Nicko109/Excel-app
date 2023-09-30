@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Controllers\ProjectController;
 use App\Imports\ProjectImport;
+use App\Models\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,15 +18,18 @@ class ImportProjectExcelFileJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $path;
+    private $task;
 
 
     /**
      * Create a new job instance.
      * @param $path
+     * @param $task
      */
-    public function __construct($path)
+    public function __construct($path, $task)
     {
         $this->path = $path;
+        $this->task = $task;
     }
 
     /**
@@ -33,6 +37,8 @@ class ImportProjectExcelFileJob implements ShouldQueue
      */
     public function handle(): void
     {
-        \Maatwebsite\Excel\Facades\Excel::import(new ProjectImport(), $this->path, 'public');
+        $this->task->update(['status' => Task::STATUS_SUCCESS]);
+
+        \Maatwebsite\Excel\Facades\Excel::import(new ProjectImport($this->task), $this->path, 'public');
     }
 }
