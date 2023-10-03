@@ -2,10 +2,15 @@
     <div>
         Import
         <div class="flex justify-center">
-            <form>
+            <form class="flex">
+                <div class="mr-2">
+                    <input class="w-16 rounded-full" type="number" min="1" max="2" v-model="type">
+                </div>
+                <div>
                 <input @change="setExcel" type="file" ref="file" class="hidden">
                 <a @click.prevent="selectExcel" href=""
                    class="block rounded-full bg-green-600 w-32 text-center text-white p-2">Excel</a>
+                </div>
             </form>
             <div v-if="file" class="ml-3">
                 <a @click.prevent="importExcel" href=""
@@ -23,7 +28,8 @@ export default {
 
     data() {
         return {
-            file: null
+            file: null,
+            type: 1,
         }
     },
 
@@ -43,8 +49,14 @@ export default {
 
             const formData = new FormData
             formData.append('file', this.file)
+            formData.append('type', this.type)
 
-            this.$inertia.post('/projects/import', formData)
+            this.$inertia.post('/projects/import', formData, {
+                onSuccess: () => {
+                    this.file = null
+                    this.$refs.file.value = null
+            }
+            })
         }
     }
 }
